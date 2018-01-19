@@ -19,7 +19,7 @@ foreach my $func (qw(compact flatten map reverse shuffle slice sort)) {
 
 sub c_attr {
   my ($self, $attrs, $i, $value) = @_;
-  return unless (my $class = ref $self || $self) && $attrs;
+  return unless ((my $class = ref $self || $self) && $attrs);
   $i ||= 0;
 
   Carp::croak 'Default has to be a code reference or constant value'
@@ -53,6 +53,7 @@ sub c_attr {
      }
      $i++;
   }
+  return ;
 }
 
 sub import {
@@ -87,7 +88,9 @@ Like L<has|Mojo::Base#has> from L<Mojo::Base>
 
 =head2 c_attr
 
-  __PACKAGE__->c_attr
+  __PACKAGE__->c_attr('attribute' => 0 => sub { rand(100); });
+
+Link an attribute to an index of a L<Mojo::Collection>.
 
 =head1 Mojo::Collection METHODS
 
