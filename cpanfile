@@ -6,3 +6,9 @@ requires 'Role::Tiny' => '2.000001';
 requires "Sub::Util" => "1.40";
 
 test_requires "Test::More" => "0.88";
+
+on develop => sub {
+  requires 'Test::Pod';
+  requires 'Test::Pod::Coverage';
+  requires 'Test::CPAN::Changes';
+};
