@@ -1,4 +1,7 @@
 Revision history for perl distribution Mojo-Collection-Role-Attributes
 
+0.02 2018-01-25T21:58:35+1300
+ - tidy up and documentation
+
 0.01 2018-01-19T15:43:25+1300
  - Started project
