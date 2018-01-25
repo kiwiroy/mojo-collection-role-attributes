@@ -76,6 +76,28 @@ __END__
 
 Mojo::Collection::Role::Attributes - Add accessors to a L<Mojo::Collection>
 
+=begin html
+
+<!-- Travis CI -->
+<a href="https://travis-ci.org/kiwiroy/mojo-collection-role-attributes">
+  <img src="https://travis-ci.org/kiwiroy/mojo-collection-role-attributes.svg?branch=master"
+       alt="Build Status"/>
+</a>
+
+<!-- Coveralls -->
+<a href="https://coveralls.io/github/kiwiroy/mojo-collection-role-attributes?branch=master">
+  <img src="https://coveralls.io/repos/github/kiwiroy/mojo-collection-role-attributes/badge.svg?branch=master"
+       alt="Coverage Status" />
+</a>
+
+<!-- Kritika -->
+<a href="https://kritika.io/users/kiwiroy/repos/4848001605520575/heads/master/">
+  <img src="https://kritika.io/users/kiwiroy/repos/4848001605520575/heads/master/status.svg"
+       alt="Kritika Analysis Status" />
+</a>
+
+=end html
+
 =head1 DESCRIPTION
 
 A L<role|Role::Tiny> to add L<accessors|/"c_attr"> to a L<Mojo::Collection>.
