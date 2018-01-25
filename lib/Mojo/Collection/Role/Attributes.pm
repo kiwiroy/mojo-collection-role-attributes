@@ -1,5 +1,6 @@
 package Mojo::Collection::Role::Attributes;
 
+use Carp qw{croak};
 use Mojo::Base -role;
 use Mojo::Collection;
 use Sub::Util;
@@ -9,9 +10,9 @@ our $VERSION = '0.01';
 requires 'new';
 
 foreach my $func (qw(compact flatten map reverse shuffle slice sort)) {
-  my $sub = Mojo::Collection->can($func) ||
-    die "Function Mojo::Collection::$func not found";
-  no strict 'refs';
+  my $sub = Mojo::Collection->can($func)
+    || croak "Function Mojo::Collection::$func not found";
+  no strict 'refs'; ## no critic (NoStrict)
   *$func = Sub::Util::set_subname __PACKAGE__ . "::$func", sub {
     return Mojo::Collection->new(shift->each)->$sub(@_);
   };
@@ -26,42 +27,48 @@ sub c_attr {
     if ref $value && ref $value ne 'CODE';
 
   for my $attr (@{ref $attrs eq 'ARRAY' ? $attrs : [$attrs]}) {
-    Carp::croak qq{Attribute "$attr" invalid} unless $attr =~ /^[a-zA-Z_]\w*$/;
+    Carp::croak qq{Attribute "$attr" invalid}
+      unless $attr =~ /^[a-zA-Z_]\w*$/xs;
     my $index = $i;
     if (ref $value) {
       my $sub = sub {
         return
-           exists $_[0][$index] ? $_[0][$index] : ($_[0][$index] = $value->($_[0]))
-           if @_ == 1;
-         $_[0][$index] = $_[1];
-         $_[0];
-       };
-       Mojo::Util::monkey_patch($class, $attr, $sub);
-     }
-     elsif (defined $value) {
-       my $sub = sub {
-         return exists $_[0][$index] ? $_[0][$index] : ($_[0][$index] = $value)
-           if @_ == 1;
-         $_[0][$index] = $_[1];
-         $_[0];
-       };
-       Mojo::Util::monkey_patch($class, $attr, $sub);
-     }
-     else {
-       Mojo::Util::monkey_patch($class, $attr,
-         sub { return $_[0][$index] if @_ == 1; $_[0][$index] = $_[1]; $_[0] });
-     }
-     $i++;
+          exists $_[0][$index]
+          ? $_[0][$index]
+          : ($_[0][$index] = $value->($_[0]))
+          if @_ == 1;
+        $_[0][$index] = $_[1];
+        $_[0];
+      };
+      Mojo::Util::monkey_patch($class, $attr, $sub);
+    }
+    elsif (defined $value) {
+      my $sub = sub {
+        return exists $_[0][$index] ? $_[0][$index] : ($_[0][$index] = $value)
+          if @_ == 1;
+        $_[0][$index] = $_[1];
+        $_[0];
+      };
+      Mojo::Util::monkey_patch($class, $attr, $sub);
+    }
+    else {
+      Mojo::Util::monkey_patch($class, $attr,
+        sub { return $_[0][$index] if @_ == 1; $_[0][$index] = $_[1]; $_[0] });
+    }
+    $i++;
   }
-  return ;
+  return;
 }
 
 sub import {
   my ($class, $caller) = (shift, caller);
   Mojo::Util::monkey_patch($caller, c_has => sub { c_attr($caller, @_) });
+  return;
 }
 
 1;
+
+__END__
 
 =pod
 
@@ -71,7 +78,7 @@ Mojo::Collection::Role::Attributes - Add accessors to a L<Mojo::Collection>
 
 =head1 DESCRIPTION
 
-A L<role|Role::Tiny> to add L<accessors|#c_attr> to a L<Mojo::Collection>.
+A L<role|Role::Tiny> to add L<accessors|/"c_attr"> to a L<Mojo::Collection>.
 
 =over 4
 
@@ -123,13 +130,16 @@ Per instance attributes
 
 =head2 c_has
 
-Like L<has|Mojo::Base#has> from L<Mojo::Base> and delegates to L<#c_attr>.
+Like L<has|Mojo::Base/"has"> from L<Mojo::Base> and delegates to L</"c_attr">.
 
 =head1 METHODS
 
 =head2 c_attr
 
+  # add accessor to class
   __PACKAGE__->c_attr('attribute' => 0 => sub { rand(100); });
+  # add accessor to instance
+  $instance->c_attr(name => 1);
 
 Link an attribute to an index of a L<Mojo::Collection>.
 
@@ -138,34 +148,34 @@ Link an attribute to an index of a L<Mojo::Collection>.
 The following L<Mojo::Collection> methods are reimplemented here to demote the
 role blessed object to a L<Mojo::Collection>. This is because they are likely to
 have altered the array positions to change the meanings of the indicies used in
-the L<#c_attr> call.
+the L</"c_attr"> call.
 
 =head2 compact
 
-See L<Mojo::Collection#compact>.
+See L<Mojo::Collection/"compact">.
 
 =head2 flatten
 
-See L<Mojo::Collection#flatten>.
+See L<Mojo::Collection/"flatten">.
 
 =head2 map
 
-See L<Mojo::Collection#map>.
+See L<Mojo::Collection/"map">.
 
 =head2 reverse
 
-See L<Mojo::Collection#reverse>.
+See L<Mojo::Collection/"reverse">.
 
 =head2 shuffle
 
-See L<Mojo::Collection#shuffle>.
+See L<Mojo::Collection/"shuffle">.
 
 =head2 slice
 
-See L<Mojo::Collection#slice>.
+See L<Mojo::Collection/"slice">.
 
 =head2 sort
 
-See L<Mojo::Collection#sort>.
+See L<Mojo::Collection/"sort">.
 
 =cut

@@ -1,3 +1,4 @@
+## no critic (MultiplePackages, RequireFilenameMatchesPackage)
 package Coordinates;
 
 use Mojo::Base qw{Mojo::Collection};

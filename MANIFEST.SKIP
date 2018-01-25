@@ -67,4 +67,8 @@
 \.swp$
 ^local/
 ^MANIFEST\.SKIP
-^README\.pod
+^README\.pod$
+^\.perltidyrc$
+^\.proverc$
+^\.ship\.conf$
+^\.travis\.yml$
