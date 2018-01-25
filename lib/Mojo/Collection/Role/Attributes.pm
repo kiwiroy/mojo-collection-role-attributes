@@ -73,16 +73,57 @@ Mojo::Collection::Role::Attributes - Add accessors to a L<Mojo::Collection>
 
 A L<role|Role::Tiny> to add L<accessors|#c_attr> to a L<Mojo::Collection>.
 
-This is experimental.
+=over 4
+
+=item This is B<experimental>.
+
+=item This is just named accessors for array elements
+
+=item This could be done with C<use constant> defining indices on any collection.
+
+=item The chaining is nice side effect.
+
+=back
 
 =head1 SYNOPSIS
 
+Class attributes
+
+  package ArrayWithAttributes;
+  use Mojo::Base qw{Mojo::Collection};
+  use Role::Tiny::With;
+  with 'Mojo::Collection::Role::Attributes';
+
+  __PACKAGE__->c_attr(id    => 0 => sub { join "", map { ("a".."z")[rand(26)] } 0 .. 26 });
+  __PACKAGE__->c_attr(start => 1 => sub { 1 });
+  __PACKAGE__->c_attr(end   => 2 => sub { 1e6 });
+
+Or import
+
+  package ArrayWithAttributes;
+  use Mojo::Base qw{Mojo::Collection};
+  use Mojo::Collection::Role::Attributes;
+
+  c_has id    => 0 => sub { join "", map { ("a".."z")[rand(26)] } 0 .. 26 };
+  c_has [qw{start end}], 1;
+
+Per instance attributes
+
+  use Mojo::Collection 'c';
+
+  my $coords = c('foo', 20, 300)->with_roles('+Attributes');
+  $coords->c_attr(id => 0);
+  $coords->c_attr(start => 1);
+  $coords->c_attr(end => 2);
+
+  # foo-bar
+  say $coords->id('foo-bar')->id();
 
 =head1 IMPORTS
 
 =head2 c_has
 
-Like L<has|Mojo::Base#has> from L<Mojo::Base>
+Like L<has|Mojo::Base#has> from L<Mojo::Base> and delegates to L<#c_attr>.
 
 =head1 METHODS
 
@@ -94,18 +135,37 @@ Link an attribute to an index of a L<Mojo::Collection>.
 
 =head1 Mojo::Collection METHODS
 
+The following L<Mojo::Collection> methods are reimplemented here to demote the
+role blessed object to a L<Mojo::Collection>. This is because they are likely to
+have altered the array positions to change the meanings of the indicies used in
+the L<#c_attr> call.
+
 =head2 compact
+
+See L<Mojo::Collection#compact>.
 
 =head2 flatten
 
+See L<Mojo::Collection#flatten>.
+
 =head2 map
+
+See L<Mojo::Collection#map>.
 
 =head2 reverse
 
+See L<Mojo::Collection#reverse>.
+
 =head2 shuffle
+
+See L<Mojo::Collection#shuffle>.
 
 =head2 slice
 
+See L<Mojo::Collection#slice>.
+
 =head2 sort
+
+See L<Mojo::Collection#sort>.
 
 =cut
