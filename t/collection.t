@@ -50,6 +50,13 @@ eval {
 };
 like $@, qr/Default has to be a code reference or constant/, 'match';
 
+is eval "## chasing coverage
+package One;
+use Mojo::Base -strict;
+use Mojo::Collection::Role::Attributes;
+&Mojo::Collection::Role::Attributes::c_attr;
+1;
+", 1, 'nothing bad';
 
 require Mojo::Collection::Role::Attributes;
 my $result;
@@ -59,11 +66,13 @@ is $result, undef, 'nothing';
 $result = Mojo::Collection::Role::Attributes->c_attr([qw{one two three}]);
 is $result, undef, 'right kind of nothing';
 
-$result = (bless [], 'Mojo::Collection::Role::Attributes')->c_attr();
+$result = (bless [], 'Mojo::Collection::Role::Attributes')->c_attr;
 is $result, undef, 'nothing';
 
 $result = (bless [], 'Mojo::Collection::Role::Attributes')->c_attr('one');
 is $result, undef, 'more of the right kind of nothing';
 
+$result = (bless [], 'Mojo::Collection::Role::Attributes')->c_attr(['one', 'two']);
+is $result, undef, 'more of the right kind of nothing';
 
 done_testing;
