@@ -5,7 +5,7 @@ use Mojo::Base -role;
 use Mojo::Collection;
 use Sub::Util;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 requires 'new';
 
